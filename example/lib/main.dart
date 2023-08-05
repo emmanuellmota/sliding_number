@@ -3,9 +3,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:sliding_number/sliding_number.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -13,7 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }
@@ -26,34 +28,38 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _points = 0;
+  final ValueNotifier<num> _pointsNotifier = ValueNotifier(3.21);
   final random = Random();
 
   void _incrementPoints() {
-    setState(() => _points += random.nextInt(100));
+    _pointsNotifier.value = num.parse((_pointsNotifier.value + 1.22).toStringAsFixed(2));
   }
 
   void _decrementPoints() {
-    setState(() => _points -= random.nextInt(100));
+    _pointsNotifier.value = num.parse((_pointsNotifier.value - 1.22).toStringAsFixed(2));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('SlidingNumber Demo'),
+        title: const Text('SlidingNumber Demo'),
       ),
       body: Center(
         child: Column(
           children: <Widget>[
             Expanded(child: Container()),
-            Text('Your points:'),
-            SlidingNumber(
-              number: _points,
-              style: Theme.of(context).textTheme.headline3!,
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.easeOutQuint,
-            ),
+            const Text('Your points:'),
+            ValueListenableBuilder(
+                valueListenable: _pointsNotifier,
+                builder: (_, num points, __) {
+                  return SlidingNumber(
+                    numberString: 'R\$ ' + points.toString().replaceAll('.', ','),
+                    style: Theme.of(context).textTheme.displaySmall!,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeOutQuint,
+                  );
+                }),
             Expanded(child: Container()),
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -63,12 +69,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   FloatingActionButton(
                     onPressed: _decrementPoints,
                     tooltip: 'Decrement',
-                    child: Icon(Icons.remove),
+                    child: const Icon(Icons.remove),
                   ),
                   FloatingActionButton(
                     onPressed: _incrementPoints,
                     tooltip: 'Increment',
-                    child: Icon(Icons.add),
+                    child: const Icon(Icons.add),
                   ),
                 ],
               ),
